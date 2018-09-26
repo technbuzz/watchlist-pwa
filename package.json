@@ -1,0 +1,28 @@
+{
+  "name": "watchlist-pwa",
+  "version": "1.0.0",
+  "description": "A watchlist pwa which has the list of media you wanna watch next and status of existing media",
+  "main": "index.js",
+  "scripts": {
+    "start":"http-server -p 8089 public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/technbuzz/watchlist-pwa.git"
+  },
+  "keywords": [
+    "progressive",
+    "web",
+    "app",
+    "javascript"
+  ],
+  "author": "samiullah.khan.1989@gmail.com <@technbuzz> (www.technbuzz.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/technbuzz/watchlist-pwa/issues"
+  },
+  "homepage": "https://github.com/technbuzz/watchlist-pwa#readme",
+  "dependencies": {
+    "http-server": "^0.11.1"
+  }
+}
