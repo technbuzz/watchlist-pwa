@@ -1,4 +1,4 @@
-const CACHE_STATIC_NAME = 'static-v3'
+const CACHE_STATIC_NAME = 'static-v4'
 
 // When service work is isntalled
 self.addEventListener('install', event => {
@@ -12,7 +12,10 @@ self.addEventListener('install', event => {
           '/index.html',
           '/src/js/app.js',
           '/src/css/style.css',
-          'https://fonts.googleapis.com/css?family=Titillium+Web:400,700'
+          'https://fonts.googleapis.com/css?family=Titillium+Web:400,700',
+          'https://code.jquery.com/jquery-3.3.1.slim.min.js',
+          'https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js'
+
         ]).then(resp => console.log(resp)).catch(error => console.log(error))
       })
   )
@@ -70,7 +73,7 @@ self.addEventListener('fetch', event => {
                       .then(cache => {
                         // the below line just consumes we need a clone to be stored in cache
                         // cache.put(event.request.url, res);
-                        // cache.put(event.request.url, res.clone());
+                        cache.put(event.request.url, res.clone());
                         return res;
                       })
                   }) //fetch.then
