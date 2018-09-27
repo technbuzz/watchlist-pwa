@@ -1,8 +1,10 @@
+const CACHE_STATIC_NAME = 'static-v3'
+
 // When service work is isntalled
 self.addEventListener('install', event => {
   console.log('[Service Worker] Installing Service Worker...', event);
   event.waitUntil(
-    caches.open('static')
+    caches.open(CACHE_STATIC_NAME)
       .then(cache => {
         console.log('[Service Worker] Precaching App Shell');
         cache.addAll([
@@ -19,7 +21,22 @@ self.addEventListener('install', event => {
 // When service work is activated
 self.addEventListener('activate', event => {
   console.log('[Service Worker] Activating Service Worker...', event);
+
+  event.waitUntil(
+    caches.keys()
+      .then(keyList => {
+        // prmoseAll b/c caches.delete returns promis 
+        return Promise.all(keyList.map(key => {
+          if(key !== CACHE_STATIC_NAME && key !== 'dynamic'){
+            console.log('[Service Worker] REmoving old cache.', key);
+            return caches.delete(key); // this returns promise
+          }
+        }))
+      })
+  )
+
   return self.clients.claim(); // it ensures that SW is active correctly
+
 });
 
 // All the above events are triggered by the browser but the fetch is by our app
@@ -33,7 +50,7 @@ self.addEventListener('fetch', event => {
 
   // event.respondWith(fetch(event.request)) // return the fetch request V1 check V2
 
-  // V2: Here we are first intercepting when this particular request is available in 
+  // V2: Here we are first intercepting when this particular request is available in jhgjh
   event.respondWith(
     caches.match(event.request)
       .then(response => {
@@ -51,10 +68,13 @@ self.addEventListener('fetch', event => {
                     // the cache
                     return caches.open('dynamic')
                       .then(cache => {
-                        cache.put(event.request.url, res);
+                        // the below line just consumes we need a clone to be stored in cache
+                        // cache.put(event.request.url, res);
+                        // cache.put(event.request.url, res.clone());
                         return res;
                       })
-                  })
+                  }) //fetch.then
+                  .catch()
         }
       })
       .catch(
