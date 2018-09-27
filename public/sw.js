@@ -1,6 +1,19 @@
 // When service work is isntalled
 self.addEventListener('install', event => {
   console.log('[Service Worker] Installing Service Worker...', event);
+  event.waitUntil(
+    caches.open('static')
+      .then(cache => {
+        console.log('[Service Worker] Precaching App Shell');
+        cache.addAll([
+          '/',
+          '/index.html',
+          '/src/js/app.js',
+          '/src/css/style.css',
+          'https://fonts.googleapis.com/css?family=Titillium+Web:400,700'
+        ]).then(resp => console.log(resp)).catch(error => console.log(error))
+      })
+  )
 });
 
 // When service work is activated
@@ -13,10 +26,40 @@ self.addEventListener('activate', event => {
 // This event happens when every html is loaded and when it request assets
 // and even when we specifically use Fetch API
 self.addEventListener('fetch', event => {
-  console.log('[Service Worker] Fetching something...', event);
+  // console.log('[Service Worker] Fetching something...', event);
   // event.respondWith(null); // overrides the data that get send back.
   // this means that consider sw as network proxy
   // the null will cause This site can’t be reached
 
-  event.respondWith(fetch(event.request)) // return the fetch request
+  // event.respondWith(fetch(event.request)) // return the fetch request V1 check V2
+
+  // V2: Here we are first intercepting when this particular request is available in 
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        if(response){
+          // if the cache is available than just return it
+          return response
+        } else {
+          // if not available than make a request for it
+          return fetch(event.request)
+                  // even we want to cache what ever is returned dynamically
+                  .then(res => {
+                    // we must return the res and whole catche operation, if we don't 
+                    // then we added request to cache and never return the resp to the 
+                    // index html. It would work on next refresh because it loads from 
+                    // the cache
+                    return caches.open('dynamic')
+                      .then(cache => {
+                        cache.put(event.request.url, res);
+                        return res;
+                      })
+                  })
+        }
+      })
+      .catch(
+        // usually we don't get error just and empty response which is alreay
+        // handled in the then block
+      )
+  )
 });

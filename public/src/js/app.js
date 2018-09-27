@@ -33,29 +33,3 @@ installBtn.addEventListener('click', () => {
     })
   }
 })
-
-fetch('https://httpbin.org/post', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
-  },
-  mode: "no-cors",
-  body: JSON.stringify({message: 'Does this works'})
-})
-.then(response => {
-  return response.json();
-})
-.then(data => console.log(data))
-.catch(error => console.log(error))
-
-// const promise = new Promise((resolve, reject) => {
-//   setTimeout(()=>{
-//     // resolve('This is executed once the timer is done!');
-//     reject({code: 500, message: 'Failed the promise'})
-//   }, 3000)
-// })
-
-// promise.then((event)=>{
-//   console.log(event)
-// }).catch(err => console.error(err.code, err.message))
