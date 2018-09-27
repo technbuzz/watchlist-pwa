@@ -1,4 +1,4 @@
-const CACHE_STATIC_NAME = 'static-v8'
+const CACHE_STATIC_NAME = 'static-v9'
 
 // When service work is isntalled
 self.addEventListener('install', event => {
@@ -10,6 +10,7 @@ self.addEventListener('install', event => {
         cache.addAll([
           '/',
           '/index.html',
+          '/offline.html',
           '/src/js/app.js',
           '/src/js/feed.js',
           '/src/css/style.css',
@@ -75,11 +76,18 @@ self.addEventListener('fetch', event => {
                       .then(cache => {
                         // the below line just consumes we need a clone to be stored in cache
                         // cache.put(event.request.url, res);
-                        // cache.put(event.request.url, res.clone());
+                        cache.put(event.request.url, res.clone());
                         return res;
                       })
+                      
                   }) //fetch.then
-                  .catch()
+                  // First we go for catche than network if nothing found that do the following
+                  .catch(err => {
+                    return caches.open(CACHE_STATIC_NAME)
+                      .then(cache => {
+                        return cache.match('/offline.html');
+                      })
+                  })
         }
       })
       .catch(
