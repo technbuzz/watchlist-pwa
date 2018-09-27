@@ -45,6 +45,19 @@ function saveCard(event){
   }
 }
 
+const url = 'https://httpbin.org/get';
+if('caches' in window){
+  caches.match(url)
+    .then(response => {
+      if(response) {
+        return response.json()
+      }
+    })
+    .then(data => {
+      console.log(data);
+      
+    })
+}
 fetch('https://httpbin.org/get')
   .then(res => res.json())
   .then(data => createCard())
