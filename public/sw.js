@@ -1,4 +1,4 @@
-const CACHE_STATIC_NAME = 'static-v18';
+const CACHE_STATIC_NAME = 'static-v22';
 const STATIC_FILES = [
   '/',
   '/index.html',

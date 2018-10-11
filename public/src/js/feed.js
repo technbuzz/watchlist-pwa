@@ -55,9 +55,17 @@ function saveCard(event){
 
 let newtorkDataReceived = false;
 
-const url = 'https://httpbin.org/get';
-fetch('https://httpbin.org/get')
-  .then(res => res.json())
+const url = 'https://httpbin.org/post';
+fetch(url, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  },
+  body: JSON.stringify({
+    message: 'Some message'
+  })
+}).then(res => res.json())
   .then(data => { 
     console.log('from server', data);
     newtorkDataReceived = true;
