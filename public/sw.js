@@ -1,4 +1,16 @@
-const CACHE_STATIC_NAME = 'static-v14'
+const CACHE_STATIC_NAME = 'static-v18';
+const STATIC_FILES = [
+  '/',
+  '/index.html',
+  '/offline.html',
+  '/src/js/app.js',
+  '/src/js/feed.js',
+  '/src/css/style.css',
+  'https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css',
+  'https://fonts.googleapis.com/css?family=Titillium+Web:400,700',
+  'https://code.jquery.com/jquery-3.3.1.slim.min.js',
+  'https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js'
+]
 
 // When service work is isntalled
 self.addEventListener('install', event => {
@@ -7,19 +19,7 @@ self.addEventListener('install', event => {
     caches.open(CACHE_STATIC_NAME)
       .then(cache => {
         console.log('[Service Worker] Precaching App Shell');
-        cache.addAll([
-          '/',
-          '/index.html',
-          '/offline.html',
-          '/src/js/app.js',
-          '/src/js/feed.js',
-          '/src/css/style.css',
-          'https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css',
-          'https://fonts.googleapis.com/css?family=Titillium+Web:400,700',
-          'https://code.jquery.com/jquery-3.3.1.slim.min.js',
-          'https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js'
-
-        ]).then(resp => console.log(resp)).catch(error => console.log(error))
+        cache.addAll(STATIC_FILES).then(resp => console.log(resp)).catch(error => console.log(error))
       })
   )
 });
@@ -97,6 +97,17 @@ self.addEventListener('activate', event => {
 //   )
 // }); //self.addEventListener('fetch')
 
+function isInArray(string, array){
+  for (let i = 0; i < array.length; i++) {
+    if(array[i] === string){
+      return true;
+    }
+
+    return false;
+  }
+}
+
+
 self.addEventListener('fetch', event => {
   let url = 'https://httpbin.org/get';
   if(event.request.url.indexOf(url) > -1){ //cache with network with specific urls
@@ -120,9 +131,12 @@ self.addEventListener('fetch', event => {
         // SO WHERE DOES THIS APPROACH LEAVES US, IT'S GOOD IF YOU WANT TO LOAD 
         // APP FASTER FROM CACHE IF THERE IS INTERNET ACCESS.
   
-    )
-
-  } else { //cache with network fallback stratey for all other urls
+    )} else if(isInArray(event.request.url, STATIC_FILES)) { //if requestUrl is part of Static Array
+      // than respond with caches only strategy
+      event.respondWith(
+        caches.match(event.request)
+      )
+    } else { //cache with network fallback stratey for all other urls
     event.respondWith(caches.match(event.request)
       .then(response => {
         if (response) {
@@ -150,7 +164,12 @@ self.addEventListener('fetch', event => {
             .catch(err => {
               return caches.open(CACHE_STATIC_NAME)
                 .then(cache => {
-                  return cache.match('/offline.html');
+                  // if(event.request.url.indexOf('/help') > -1 || event.request.url.indexOf('/info')){
+                  // The above method is not flexible here is the flexible method
+                  // We can also go ahead and can have a fallback placehorder image for image requests
+                  if(event.request.headers.get('accept').includes('text/html')){
+                    return cache.match('/offline.html');
+                  }
                 })
             })
         }
