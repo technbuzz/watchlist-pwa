@@ -1,5 +1,7 @@
+const container = document.querySelector('#contianer');
+
+
 function createCard() {
-  const container = document.querySelector('#contianer');
   
   let card = document.createElement('div');
   card.className = 'card';
@@ -21,15 +23,21 @@ function createCard() {
   cardText.textContent = "Nanga Parbat, locally known as Diamer, is the ninth highest mountain in the world at 8,126 metres above sea level.";
   cardBody.appendChild(cardText);
 
-  // let saveButton = document.createElement('button');
-  // saveButton.classList.add('btn');
-  // saveButton.textContent = "Save Card"
-  // cardBody.appendChild(saveButton);
+  let saveButton = document.createElement('button');
+  saveButton.classList.add('btn');
+  saveButton.textContent = "Save Card"
+  cardBody.appendChild(saveButton);
 
-  // saveButton.addEventListener('click', saveCard);
+  saveButton.addEventListener('click', saveCard);
 
   card.appendChild(cardBody);
   container.appendChild(card);
+}
+
+function clearCards(){
+  while(container.hasChildNodes()){
+    container.removeChild(container.lastChild);
+  }
 }
 
 
@@ -45,7 +53,18 @@ function saveCard(event){
   }
 }
 
+let newtorkDataReceived = false;
+
 const url = 'https://httpbin.org/get';
+fetch('https://httpbin.org/get')
+  .then(res => res.json())
+  .then(data => { 
+    console.log('from server', data);
+    newtorkDataReceived = true;
+    clearCards();    
+    createCard()
+  })
+
 if('caches' in window){
   caches.match(url)
     .then(response => {
@@ -54,10 +73,10 @@ if('caches' in window){
       }
     })
     .then(data => {
-      console.log(data);
-      
+      console.log('from cache', data);
+      if(newtorkDataReceived) { 
+        clearCards();
+        createCard();
+      }
     })
 }
-fetch('https://httpbin.org/get')
-  .then(res => res.json())
-  .then(data => createCard())
