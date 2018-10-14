@@ -1,4 +1,4 @@
-const CACHE_STATIC_NAME = 'static-v22';
+const CACHE_STATIC_NAME = 'static-v26';
 const STATIC_FILES = [
   '/',
   '/index.html',
@@ -18,6 +18,7 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_STATIC_NAME)
       .then(cache => {
+
         console.log('[Service Worker] Precaching App Shell');
         cache.addAll(STATIC_FILES).then(resp => console.log(resp)).catch(error => console.log(error))
       })
@@ -44,6 +45,22 @@ self.addEventListener('activate', event => {
   return self.clients.claim(); // it ensures that SW is active correctly
 
 });
+
+/**
+ * @description A recursive function that shrinks a cache
+ * @param {string} cacheName 
+ * @param {number} maxItems 
+ */
+function trimCache(cacheName, maxItems){
+  caches.open(cacheName)
+    .then(cache => cache.keys())
+    .then(keys => {
+      if(keys.length > maxItems){
+        caches.delete(keys[0])
+          .then(trimCache(cacheName, maxItems))
+      }
+    })
+}
 
 // All the above events are triggered by the browser but the fetch is by our app
 // This event happens when every html is loaded and when it request assets
@@ -118,6 +135,8 @@ self.addEventListener('fetch', event => {
         .then(cache => {
           return fetch(event.request)
             .then(res => { 
+              // lookup browser cacheApi limit for limit
+              // trimCache('dynamic',3)
               cache.put(event.request, res.clone())
               // agian the res is not send to feed.js file, it will would work on
               // next reoload from cache but won't appear first time
@@ -155,6 +174,7 @@ self.addEventListener('fetch', event => {
                 .then(cache => {
                   // the below line just consumes we need a clone to be stored in cache
                   // cache.put(event.request.url, res);
+                  // trimCache('dynamic', 3)
                   cache.put(event.request.url, res.clone());
                   return res;
                 })

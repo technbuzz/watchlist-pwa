@@ -40,6 +40,15 @@ function clearCards(){
   }
 }
 
+function killSW(){
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.getRegistration()
+      .then(r => {
+        r.unregister();
+      })
+  }
+}
+
 
 // currently not in use, saves post in cache
 function saveCard(event){
@@ -51,6 +60,8 @@ function saveCard(event){
         cache.add('/src/images/nanga.jpg');
       })
   }
+  // killSW();
+
 }
 
 let newtorkDataReceived = false;
@@ -88,3 +99,11 @@ if('caches' in window){
       }
     })
 }
+
+const db = firebase.firestore(app);
+const postsRef = db.collection("posts")
+postsRef.get().then(querySnapshot => {
+  querySnapshot.forEach(doc => 
+    console.log(doc.data())
+  )
+})
