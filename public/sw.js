@@ -1,16 +1,29 @@
-const CACHE_STATIC_NAME = 'static-v26';
+
+importScripts('/src/js/idb.js');
+
+const CACHE_STATIC_NAME = 'static-v28';
 const STATIC_FILES = [
   '/',
   '/index.html',
   '/offline.html',
   '/src/js/app.js',
   '/src/js/feed.js',
+  '/src/js/idb.js',
   '/src/css/style.css',
   'https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css',
   'https://fonts.googleapis.com/css?family=Titillium+Web:400,700',
   'https://code.jquery.com/jquery-3.3.1.slim.min.js',
   'https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js'
-]
+];
+const dbPromise = idb.open('feed-store', 1, (db) => {
+  // objectStore is not created by posts name on then create it
+  // without this check the post will be create everytime
+  if(!db.objectStoreNames.contains('posts')){
+    db.createObjectStore('posts', {
+      keyPath: 'id'
+    })
+  }
+});
 
 // When service work is isntalled
 self.addEventListener('install', event => {
@@ -126,29 +139,50 @@ function isInArray(string, array){
 
 
 self.addEventListener('fetch', event => {
-  let url = 'https://httpbin.org/get';
+  let url = 'https://reqres.in';
   if(event.request.url.indexOf(url) > -1){ //cache with network with specific urls
     event.respondWith(
       // which cache do I open, This is empty on first load
       // it's for the dynamic asset so use dynamic cache
-      caches.open('dynamic')
-        .then(cache => {
-          return fetch(event.request)
-            .then(res => { 
+      // caches.open('dynamic')
+        // .then(cache => {
+          // return fetch(event.request)
+            // .then(res => { 
               // lookup browser cacheApi limit for limit
-              // trimCache('dynamic',3)
-              cache.put(event.request, res.clone())
+              // // trimCache('dynamic',3)
+              // cache.put(event.request, res.clone())
+
               // agian the res is not send to feed.js file, it will would work on
               // next reoload from cache but won't appear first time
-              return res;
-            })
-        })
+              // return res;
+            // })
+        // })
         // at this point we are caching all the things that are already precacached
         // by static cache, we could fine tune it by checking 
         // but we don't want the old approach we don want to update the old data
         // with that new strategy && IT DOESN'T WORK OFFLINE
         // SO WHERE DOES THIS APPROACH LEAVES US, IT'S GOOD IF YOU WANT TO LOAD 
         // APP FASTER FROM CACHE IF THERE IS INTERNET ACCESS.
+
+
+        // Use above code if you don't use indexed db
+        fetch(event.request)
+          .then(res => {
+            let clonedRes = res.clone();
+            clonedRes.json()
+              .then(response => {
+                dbPromise.then(db => {
+                  let tx = db.transaction('posts', 'readwrite');
+                  let store = tx.objectStore('posts');
+                  store.put(response.data);
+                  // simply make sure that transaction is executed and put is done
+                  // we have to use transaction even we have one operation
+                  return tx.complete;
+                })
+                console.log('SW:', response)
+              })
+            return res
+          })
   
     )} else if(isInArray(event.request.url, STATIC_FILES)) { //if requestUrl is part of Static Array
       // than respond with caches only strategy
