@@ -1,7 +1,8 @@
 
 importScripts('/src/js/idb.js');
+importScripts('/src/js/utility.js');
 
-const CACHE_STATIC_NAME = 'static-v28';
+const CACHE_STATIC_NAME = 'static-v29';
 const STATIC_FILES = [
   '/',
   '/index.html',
@@ -15,15 +16,7 @@ const STATIC_FILES = [
   'https://code.jquery.com/jquery-3.3.1.slim.min.js',
   'https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js'
 ];
-const dbPromise = idb.open('feed-store', 1, (db) => {
-  // objectStore is not created by posts name on then create it
-  // without this check the post will be create everytime
-  if(!db.objectStoreNames.contains('posts')){
-    db.createObjectStore('posts', {
-      keyPath: 'id'
-    })
-  }
-});
+
 
 // When service work is isntalled
 self.addEventListener('install', event => {
@@ -171,14 +164,7 @@ self.addEventListener('fetch', event => {
             let clonedRes = res.clone();
             clonedRes.json()
               .then(response => {
-                dbPromise.then(db => {
-                  let tx = db.transaction('posts', 'readwrite');
-                  let store = tx.objectStore('posts');
-                  store.put(response.data);
-                  // simply make sure that transaction is executed and put is done
-                  // we have to use transaction even we have one operation
-                  return tx.complete;
-                })
+                writeDate('posts', response.data)
                 console.log('SW:', response)
               })
             return res

@@ -39,6 +39,32 @@ function clearCards() {
   }
 }
 
+/**
+ * @description It refershed the UI by clearing and regenrating by looping over
+ * provided cards
+ * @param {array} cards Array of Cards
+ */
+function updateUI(cards){
+  setTimeout(() => {
+    console.log('Clearing out the cards');
+  }, 250);
+  
+  setTimeout(() => {
+    clearCards();
+  }, 1000);
+  
+  setTimeout(() => {
+    console.log('Adding new cards');
+  }, 1250);
+  
+  setTimeout(() => {
+    cards.forEach(card => {
+      createCard(card);
+    })
+  }, 2500);
+  
+}
+
 function killSW() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistration().then(r => {
@@ -59,9 +85,9 @@ function saveCard(event) {
   // killSW();
 }
 
-// let newtorkDataReceived = false;
+let newtorkDataReceived = false;
 
-const url = 'https://reqres.in/api/users/2';
+const url = 'https://reqres.in/api/';
 fetch(url
 //   , {
 //   method: 'GET',
@@ -82,21 +108,16 @@ fetch(url
   })
   .catch(error => console.log(error))
 
-// if('caches' in window){
-//   caches.match(url)
-//     .then(response => {
-//       if(response) {
-//         return response.json()
-//       }
-//     })
-//     .then(data => {
-//       console.log('from cache', data);
-//       if(newtorkDataReceived) {
-//         clearCards();
-//         createCard();
-//       }
-//     })
-// }
+if ('indexedDB' in window) {
+  readAllData('posts')
+    .then(storedData => {
+      if (!newtorkDataReceived) {
+        console.log('storedData: ', storedData)
+        updateUI(storedData);
+      }
+    })
+
+}
 
 // const db = firebase.firestore(app);
 // const postsRef = db.collection('posts');
