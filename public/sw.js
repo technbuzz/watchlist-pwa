@@ -2,7 +2,7 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-const CACHE_STATIC_NAME = 'static-v32';
+const CACHE_STATIC_NAME = 'static-v33';
 const STATIC_FILES = [
   '/',
   '/index.html',

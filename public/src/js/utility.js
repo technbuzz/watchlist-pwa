@@ -9,6 +9,12 @@ const dbPromise = idb.open('feed-store', 1, (db) => {
       keyPath: 'id'
     })
   }
+
+  if(!db.objectStoreNames.contains('sync-posts')){
+    db.createObjectStore('sync-posts', {
+      keyPath: 'id'
+    })
+  }
 });
 
 function writeDate(st, data){

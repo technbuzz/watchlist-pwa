@@ -133,6 +133,10 @@ if ('indexedDB' in window) {
 //   clearAllData('posts');
 // })
 
+function getRandom(){
+  return Math.floor(Math.random() * 75) + 25
+}
+
 $('#add-student').on('click', x => {
   $('#newStudent').modal('show')
 })
@@ -146,11 +150,23 @@ form.addEventListener('submit', e=>{
   console.log(form.student.value);
   
   $('#newStudent').modal('hide');
+  // The reason is that the event that triggers the sync happens in feed.js
+  // I can listen to that event in SW or form submission of feeds.js in SW
   if('serviceWorker' in navigator && 'SyncManager' in window){
     navigator.serviceWorker.ready
       .then(sw => {
         console.log(sw);
-        
+        const post = {
+          name: form.student.value,
+          math: getRandom(),
+          science: getRandom(),
+          english: getRandom()
+        };
+
+        writeDate('sync-posts', post)
+          .then(x => {
+            sw.sync.register('sync-new-post');
+          })
       })
   }
 
