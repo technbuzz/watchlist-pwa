@@ -1,4 +1,5 @@
 const container = document.querySelector('#contianer');
+const clearDB = document.querySelector('#clearDB');
 
 function createCard(data) {
   let card = document.createElement('div');
@@ -87,7 +88,7 @@ function saveCard(event) {
 
 let newtorkDataReceived = false;
 
-const url = 'https://reqres.in/api/';
+const url = 'https://reqres.in/api/users/1';
 fetch(url
 //   , {
 //   method: 'GET',
@@ -127,4 +128,24 @@ if ('indexedDB' in window) {
 //     createCard(doc.data());
 //   });
 // });
+
+// clearDB.addEventListener('click', x => {
+//   clearAllData('posts');
+// })
+
+$('#add-student').on('click', x => {
+  $('#newStudent').modal('show')
+})
+
+const form = document.forms.new;
+form.addEventListener('submit', e=>{
+  e.preventDefault();
+  if(form.student.value.trim() === ''){
+    return false;
+  }
+  console.log(form.student.value);
+  
+
+
+})
 

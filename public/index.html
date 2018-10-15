@@ -69,6 +69,39 @@
     <button>Add to Home</button>
   </div>
 
+  <hr>
+
+  <div class="container">
+    <h3>Add New Student</h3>
+    <button class="btn btn-info" id="add-student">add New Student</button>
+
+    <div class="modal fade" id="newStudent" tabindex="-1" role="dialog" aria-labelledby="newStudentLabel" aria-hidden="true">
+      <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="newStudentLabel">New message</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form name="new">
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="student">Name</label>
+                <input type="text" class="form-control" id="student" aria-describedby="emailHelp" placeholder="Enter Name">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <button id="clearDB">Clear indexedDB</button> -->
   <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-firestore.js"></script>
 
@@ -83,19 +116,19 @@
       messagingSenderId: "709949235392"
     });
     app.firestore().enablePersistence()
-  .catch(function(err) {
-      if (err.code == 'failed-precondition') {
+      .catch(function (err) {
+        if (err.code == 'failed-precondition') {
           // Multiple tabs open, persistence can only be enabled
           // in one tab at a a time.
           // ...
-      } else if (err.code == 'unimplemented') {
+        } else if (err.code == 'unimplemented') {
           // The current browser does not support all of the
           // features required to enable persistence
           // ...
-      }
-  });
+        }
+      });
 // Subsequent queries will use persistence, if it was enabled successfully
-    
+
   </script>
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" crossorigin="anonymous"></script>

@@ -2,7 +2,7 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-const CACHE_STATIC_NAME = 'static-v29';
+const CACHE_STATIC_NAME = 'static-v32';
 const STATIC_FILES = [
   '/',
   '/index.html',
@@ -158,10 +158,14 @@ self.addEventListener('fetch', event => {
         // APP FASTER FROM CACHE IF THERE IS INTERNET ACCESS.
 
 
+
+
+
         // Use above code if you don't use indexed db
         fetch(event.request)
           .then(res => {
             let clonedRes = res.clone();
+            //check EX1.1 at /src/code-examples.md
             clonedRes.json()
               .then(response => {
                 writeDate('posts', response.data)

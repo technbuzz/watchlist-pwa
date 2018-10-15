@@ -1,3 +1,6 @@
+/// <reference path="/src/js/idb.js">
+/// <reference path="/src/js/idb.d.ts">
+
 const dbPromise = idb.open('feed-store', 1, (db) => {
   // objectStore is not created by posts name on then create it
   // without this check the post will be create everytime
@@ -25,5 +28,22 @@ function readAllData(st){
       let tx = db.transaction(st, 'readonly');
       let store = tx.objectStore(st);
       return store.getAll();
+      // we need tx.complete only on every write operation
     })
+}
+
+/**
+ * 
+ * @param {string} st Name of the store
+ */
+function clearAllData(st){
+  return dbPromise
+          .then(db => {
+            const tx = db.transaction(st, 'readwrite');
+            const store = tx.objectStore(st);
+            store.clear();
+            
+            return tx.complete;
+          })
+
 }
