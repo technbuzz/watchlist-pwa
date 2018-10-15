@@ -145,6 +145,14 @@ form.addEventListener('submit', e=>{
   }
   console.log(form.student.value);
   
+  $('#newStudent').modal('hide');
+  if('serviceWorker' in navigator && 'SyncManager' in window){
+    navigator.serviceWorker.ready
+      .then(sw => {
+        console.log(sw);
+        
+      })
+  }
 
 
 })
