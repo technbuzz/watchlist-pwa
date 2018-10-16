@@ -157,16 +157,25 @@ form.addEventListener('submit', e=>{
       .then(sw => {
         console.log(sw);
         const post = {
+          id: getRandom(),
           name: form.student.value,
           math: getRandom(),
           science: getRandom(),
           english: getRandom()
         };
-
+        console.log(post)
         writeDate('sync-posts', post)
           .then(x => {
             sw.sync.register('sync-new-post');
           })
+          .then(x => {
+            //show alert code
+            $('.alert').show();
+            setTimeout(() => {
+              $('.alert').hide();
+            }, 3000);
+          })
+          .catch(error => console.log(error))
       })
   }
 
