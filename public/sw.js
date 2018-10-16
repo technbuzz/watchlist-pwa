@@ -231,3 +231,47 @@ self.addEventListener('fetch', event => {
     caches.match(event.request)
   )
 })
+
+function sendData(data){
+  return fetch('https://stdapi.herokuapp.com/createStudent', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      name: data.name,
+      maths: getRandom(),
+      science: getRandom(),
+      english: getRandom()
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    console.log(res)
+    if(res.code === 200){
+      deleteItemFromData('sync-posts', data.id)
+    }
+  })
+  .catch(error => console.log('Error while sending data', error))
+}
+
+self.addEventListener('sync', event => {
+  // at this point I know I have internet connection
+  console.log('[SW] Background syncing', event);
+  //tag is for different sync tasks
+  if(event.tag === 'sync-new-posts'){
+    console.log('[SW] Sync new posts');
+    
+    //event don't finishes untile data is posted
+    event.waitUntil(
+      readAllData('sync-posts')
+        .then(data => {
+          console.log(data);
+          data.forEach(post => {
+            sendData(post)
+          })
+        })
+    )
+  }
+  
+})

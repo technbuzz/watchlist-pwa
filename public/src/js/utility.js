@@ -53,3 +53,19 @@ function clearAllData(st){
           })
 
 }
+
+
+function deleteItemFromData(st, id){
+  dbPromise
+    .then(db => {
+      const tx = db.transaction(st, 'readwrite');
+      const store = tx.objectStore(st);
+      store.delete(id);
+      tx.complete;
+    })
+    .then(x => console.log('Item deleted!s'))
+}
+
+function getRandom(){
+  return (Math.floor(Math.random() * 75) + 25).toString();
+}

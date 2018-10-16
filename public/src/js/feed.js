@@ -133,9 +133,24 @@ if ('indexedDB' in window) {
 //   clearAllData('posts');
 // })
 
-function getRandom(){
-  return Math.floor(Math.random() * 75) + 25
+function sendData(){
+  fetch('https://stdapi.herokuapp.com/createStudent', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify({
+      name: form.student.value,
+      math: getRandom(),
+      science: getRandom(),
+      english: getRandom()
+    })
+  })
+  .then(res => console.log(`Sent Data ${res}`))
 }
+
+
 
 $('#add-student').on('click', x => {
   $('#newStudent').modal('show')
@@ -166,7 +181,7 @@ form.addEventListener('submit', e=>{
         console.log(post)
         writeDate('sync-posts', post)
           .then(x => {
-            sw.sync.register('sync-new-post');
+            sw.sync.register('sync-new-posts');
           })
           .then(x => {
             //show alert code
@@ -177,8 +192,8 @@ form.addEventListener('submit', e=>{
           })
           .catch(error => console.log(error))
       })
+  } else {// browse rsupport
+    sendData()
   }
-
-
 })
 
