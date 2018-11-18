@@ -55,15 +55,35 @@
 
   <div class="container pt-3 pb-3" id="contianer">
 
-    <div class="card">
-      <img class="card-img-top" src="http://www.risparmioinviaggio.it/wp-content/uploads/2014/04/Shimshal-Lake.jpg" alt="Lake Saiful Muluk">
-      <div class="card-body">
-        <h5 class="card-title">Lake Saiful Muluk
-        </h5>
-        <p class="card-text">Saiful Muluk is a mountainous lake located at the northern end of the Kaghan Valley, near
-          the town of Naran in the Saiful Muluk National Park. </p>
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active" id="nav-movies-tab" data-toggle="tab" href="#nav-movies" role="tab" aria-controls="nav-movies" aria-selected="true">Movies</a>
+        <a class="nav-item nav-link" id="nav-tv-tab" data-toggle="tab" href="#nav-tv" role="tab" aria-controls="nav-tv" aria-selected="false">Tv</a>
       </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+      <div class="tab-pane fade show active" id="nav-movies" role="tabpanel" aria-labelledby="nav-movies-tab">
+        <h3>To Watch</h3>
+      </div>
+      <div class="tab-pane fade" id="nav-tv" role="tabpanel" aria-labelledby="nav-tv-tab">...</div>
     </div>
+
+    <div id="movies">
+
+    </div>
+
+    <template id="card-template">
+      <div class="card">
+        <img class="card-img-top" src="http://www.risparmioinviaggio.it/wp-content/uploads/2014/04/Shimshal-Lake.jpg" alt="Lake Saiful Muluk">
+        <div class="card-body">
+          <h5 class="card-title">Lake Saiful Muluk
+          </h5>
+          <p class="card-text">Saiful Muluk is a mountainous lake located at the northern end of the Kaghan Valley, near
+            the town of Naran in the Saiful Muluk National Park. </p>
+        </div>
+      </div>
+    </template>
+
 
 
     <button>Add to Home</button>
@@ -113,28 +133,6 @@
   <!-- <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-firestore.js"></script> -->
 
   <script>
-    // Initialize Firebase
-    // var app = firebase.initializeApp({
-    //   apiKey: "AIzaSyC_H-s_Qq8NhVnWDGVC54-stdusF8w53Qg",
-    //   authDomain: "hospitals-1155f.firebaseapp.com",
-    //   databaseURL: "https://hospitals-1155f.firebaseio.com",
-    //   projectId: "hospitals-1155f",
-    //   storageBucket: "hospitals-1155f.appspot.com",
-    //   messagingSenderId: "709949235392"
-    // });
-    // app.firestore().enablePersistence()
-      // .catch(function (err) {
-        // if (err.code == 'failed-precondition') {
-          // Multiple tabs open, persistence can only be enabled
-          // in one tab at a a time.
-          // ...
-        // } else if (err.code == 'unimplemented') {
-          // The current browser does not support all of the
-          // features required to enable persistence
-          // ...
-        // }
-      // });
-// Subsequent queries will use persistence, if it was enabled successfully
 
   </script>
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
@@ -143,7 +141,8 @@
   <script src="/src/js/idb.js"></script>
   <script src="/src/js/utility.js"></script>
   <script src="/src/js/app.js"></script>
-  <script src="/src/js/feed.js"></script>
+  <script src="/src/js/movies.js"></script>
+  <!-- <script src="/src/js/feed.js"></script> -->
 
 </body>
 
